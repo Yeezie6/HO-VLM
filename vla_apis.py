@@ -61,67 +61,90 @@ import json
 from collections import defaultdict
 
 def parse_all_results(qwen_results):
-    frame_contacts = {}
+    """
+    合并所有图片的VLM输出为标准结构，支持手指信息
+    对于重复帧，contact为False优先，否则为True，手指信息合并去重
+    """
+    frame_contacts = defaultdict(list)
     appeared_set = set()
+    # 支持 fingers 字段的正则
     contact_pattern = re.compile(
-        r'"frame"\s*:\s*(\d+),\s*"r_contact"\s*:\s*(true|false),\s*"l_contact"\s*:\s*(true|false)'
+        r'"frame"\s*:\s*(\d+),\s*"r_contact"\s*:\s*(true|false),\s*"l_contact"\s*:\s*(true|false)(?:,\s*"r_fingers"\s*:\s*\[([^\]]*)\])?(?:,\s*"l_fingers"\s*:\s*\[([^\]]*)\])?'
     )
 
     for img_name, result_str in qwen_results.items():
-        if "contacts" not in result_str:
-            print(f"警告: {img_name} 缺少 contacts 字段")
-            continue
-
         for m in contact_pattern.finditer(result_str):
-            try:
-                frame = int(m.group(1))
-                r_contact = m.group(2) == "true"
-                l_contact = m.group(3) == "true"
-            except (IndexError, ValueError):
-                print(f"跳过 {img_name} 的无效 contact 数据: {m.group()}")
-                continue
-
-            # 记录出现的手
+            frame = int(m.group(1))
+            r_contact = m.group(2) == "true"
+            l_contact = m.group(3) == "true"
+            r_fingers = re.findall(r'"(thumb|index|middle)"', m.group(4) or "")
+            l_fingers = re.findall(r'"(thumb|index|middle)"', m.group(5) or "")
+            frame_contacts[frame].append({
+                "r_contact": r_contact,
+                "l_contact": l_contact,
+                "r_fingers": r_fingers,
+                "l_fingers": l_fingers
+            })
             if r_contact:
                 appeared_set.add("right")
             if l_contact:
                 appeared_set.add("left")
 
-            # 冲突检测
-            if frame not in frame_contacts:
-                frame_contacts[frame] = {
-                    "frame": frame,  # 显式存储 frame
-                    "r_contact": r_contact,
-                    "l_contact": l_contact,
-                    "conflict": False
-                }
-            else:
-                existing = frame_contacts[frame]
-                if (existing["r_contact"] != r_contact or
-                    existing["l_contact"] != l_contact):
-                    existing["conflict"] = True
-                    existing["r_contact"] = False
-                    existing["l_contact"] = False
-
-    # 生成最终 contacts 列表（确保包含 frame）
+    # 合并同帧的结果，False优先，手指合并去重
     contacts = []
     for frame in sorted(frame_contacts.keys()):
-        contact = frame_contacts[frame]
+        items = frame_contacts[frame]
+        r_contact = any(item["r_contact"] for item in items)
+        l_contact = any(item["l_contact"] for item in items)
+        # False优先
+        r_contact = False if any(not item["r_contact"] for item in items) else True
+        l_contact = False if any(not item["l_contact"] for item in items) else True
+        # 合并手指
+        r_fingers = set()
+        l_fingers = set()
+        for item in items:
+            r_fingers.update(item["r_fingers"])
+            l_fingers.update(item["l_fingers"])
         contacts.append({
-            "frame": contact["frame"],  # 强制包含 frame
-            "r_contact": contact["r_contact"],
-            "l_contact": contact["l_contact"]
+            "frame": frame,
+            "r_contact": r_contact,
+            "l_contact": l_contact,
+            "r_fingers": sorted(list(r_fingers)),
+            "l_fingers": sorted(list(l_fingers))
         })
 
     return {
         "frames_cnt": len(contacts),
-        "appeared": sorted([hand for hand in appeared_set if any(
-            contact["r_contact"] or contact["l_contact"] 
-            for contact in contacts
-        )]),
+        "appeared": sorted(list(appeared_set)),
         "contacts": contacts
     }
     
+
+def get_contact_segments(contacts, hand):
+    segments = []
+    in_contact = False
+    start = None
+    fingers_set = set()
+    for c in contacts:
+        contact = c[f"{hand}_contact"]
+        fingers = set(c.get(f"{hand}_fingers", []))
+        if contact:
+            if not in_contact:
+                in_contact = True
+                start = c["frame"]
+                fingers_set = set(fingers)
+            else:
+                fingers_set |= fingers
+        else:
+            if in_contact:
+                segments.append({"start": start, "end": c["frame"]-1, "fingers": sorted(list(fingers_set))})
+                in_contact = False
+                start = None
+                fingers_set = set()
+    if in_contact:
+        segments.append({"start": start, "end": contacts[-1]["frame"], "fingers": sorted(list(fingers_set))})
+    return segments
+
 
 def save_vlm_result_to_json(vlm_result, out_path):
     """
@@ -339,6 +362,17 @@ prompt = """
 
     In situations where you are not highly confident about whether contact occurs, you should prefer choice false rather than true.
     please do not output any information other than that format.
+    
+    For each frame, in addition to predicting the hand-object contact status (appeared, frame), please also predict which fingers (only thumb, index, middle) of each hand are contacting the object.  
+    Please add the finger contact information to the JSON output for each frame, in the following format:
+
+    {
+        "frame": 10,
+        "r_contact": true,
+        "l_contact": false,
+        "r_fingers": ["thumb", "index"],  // right hand fingers in contact
+        "l_fingers": []                   // left hand fingers in contact
+    }
 """
 
 # QwenMulti add on
@@ -386,6 +420,11 @@ def main():
         
     # 合并所有图片的帧为一个vlm_result
     vlm_result = parse_all_results(qwen_results)
+    vlm_result["contact_segments"] = {
+        "left": get_contact_segments(vlm_result["contacts"], "l"),
+        "right": get_contact_segments(vlm_result["contacts"], "r")
+    }
+    
     print(vlm_result)
     
     save_vlm_result_to_json(vlm_result, "./output/rsrd_nerfgun/ho_contact.json")
@@ -395,6 +434,10 @@ def main():
     
     print("Accuracy: {:.4f}".format(acc))
     print("Wrong frames:", wrong_frames)
+    
+
+    
+
         
     # img_dir = f"/home/ubuntu/gnaq-proj/api/output/rsrd_nerfgun/k3k1r30"
     # image_paths = [
