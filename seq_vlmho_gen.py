@@ -142,43 +142,45 @@ def main():
     parser.add_argument("-i", "--input", help="序列文件夹路径")
     parser.add_argument("-o", "--output", default="merged_output.jpg", help="输出文件路径，默认为 merged_output.jpg")
     parser.add_argument("-k", "--count", type=int, default=4, help="合并图片数量，默认为4")
-    parser.add_argument("--interval", type=int, default=1, help="每张图片之间的间隔，单位为秒，默认为1")
-    parser.add_argument("-r", "--round", type=int, default=1, help="合并轮次, 默认为1")
+    parser.add_argument("--interval", type=int, default=1, help="每张图片之间的间隔，单位为帧，默认为1")
     parser.add_argument("--rand-k", action="store_true", help="随机选择k张图片进行合并")
     
     args = parser.parse_args()
     
     img_paths = read_images_from_folder(f"{args.input}/image")
-    # generate `round` times different sample
     os.makedirs(args.output, exist_ok=True)
-    # 随机采样初始帧
-    samples = np.random.choice(
-        len(img_paths) - args.count * args.interval + 1, 
-        args.round, 
-        replace=False
-    )
-    
+
+    K = args.count
+    interval = int(args.interval)
+    # 自动计算最大可合成轮数
+    max_round = max(1, (len(img_paths) - (K - 1) * interval))
+    # 顺序采样初始帧
+    start_idx = 0
+    samples = list(range(start_idx, max_round))
     
     depths = read_depths_from_file(os.path.join(args.input, "metric_depth.pkl"))
     rgbs = [Image.open(path) for path in img_paths]
     depths_colorized = [colorize_depth(depths[i]) for i in range(len(depths))]
     
-    # generate sample tuples
-    K = args.count
-    interval = int(args.interval)
     img_tups = []
     dep_tups = []
-    for i in range(args.round):
-        cur_id = samples[i]
+    for cur_id in samples:
         if args.rand_k:
             selected_indices = np.random.choice(len(img_paths), K, replace=False)
         else:
-            selected_indices = [_ for _ in range(cur_id, len(img_paths), interval)]
-            selected_indices = selected_indices[:K]
+            selected_indices = [cur_id + interval * i for i in range(K) if cur_id + interval * i < len(img_paths)]
+            # 如果不足K帧，往前补齐
+            if len(selected_indices) < K:
+                need = K - len(selected_indices)
+                last_idx = selected_indices[-1] if selected_indices else len(img_paths) - 1
+                for j in range(need):
+                    idx = last_idx - (j + 1)
+                    if idx >= 0:
+                        selected_indices.append(idx)
+                selected_indices = sorted(selected_indices)
         img_tups.append([(rgbs[i], img_paths[i]) for i in selected_indices])
         dep_tups.append([(Image.fromarray(depths_colorized[i]), img_paths[i]) for i in selected_indices])
     
-    # generate merged images from tuples
     merged_rgb = merge_images_horizontally(img_tups)
     merged_depth = merge_images_horizontally(dep_tups)
     
@@ -193,40 +195,10 @@ if __name__ == "__main__":
     main()
 
 
+
 """
-python vlmho_gen.py \
+python seq_vlmho_gen.py \
     -i /home/ubuntu/gnaq_release/rsrd/rsrd_nerfgun/build \
-    -o /home/ubuntu/gnaq-proj/api/output/rsrd_nerfgun/k3k1r50\
-    -k 3 -r 50 --interval 1
-"""
-
-"""
-this is a horizontally merged sequence of K selected frame from a video, 
-in the video, a person is interacting with an articulated object.
-there are black bars between each two frames in all of these K frames.
-the first row is the RGB frames, and the second row is the depth frames.
-the selecting method is using a fixed interval to select K frames from the video, 
-with a random starting point.
-
-Please compare these frames and answer question twice, once for left hand and once for right hand.
-if there's no left hand or right hand in the video, please answer 'none' for that hand.
-
-starts from the first 2 of K, is the left / right hand performing:
-(A) fingertips start touching this articulated object within this interval, 
-    and not doing this in the first frame of this interval.
-(B) fingertips stop touching this articulated object within this interval,
-    and not doing this in the first frame of this interval.
-(C) fingertips keep touching this articulated object within this interval.
-(D) fingertips not touching this articulated object within this interval.
-
-then, based on your answer for each pair, please output 2 * K-1 answers in the following format:
-
-example of K=4:
-{
-    00010-00020: Left:C, Right:A,
-    00020-00030: Left:B, Right:D,
-    00030-00040: Left:A, Right:C,
-}
-
-finally, if I uploaded multiple (merged) images, please output the answer for each image in a new line.
+    -o /home/ubuntu/gnaq-proj/api/output/rsrd_nerfgun/seqk3k1\
+    -k 3 --interval 1
 """

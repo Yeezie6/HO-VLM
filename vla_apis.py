@@ -24,65 +24,125 @@ def load_gt_contacts(json_path):
     gt_dict = {}
     for item in gt["contacts"]:
         gt_dict[str(item["frame"]).zfill(5)] = {
-            "Left": item["l_contact"],
-            "Right": item["r_contact"]
+            "r_contact": item["r_contact"],
+            "l_contact": item["l_contact"]
         }
     return gt_dict
 
 def calc_vlm_accuracy_multi(vlm_result, gt_result):
+    """
+    计算VLM输出与GT的准确率，只要左右手都正确才算该帧正确
+    支持vlm_result["contacts"]为list，每个元素包含frame, r_contact, l_contact
+    gt_result为dict，key为帧号字符串（如'00031'），value为左右手接触dict
+    """
     total = 0
     correct = 0
     wrong_frames = []
-    for frame, preds in vlm_result.items():
-        gt = gt_result.get(frame)
+    for contact in vlm_result["contacts"]:
+        # 统一帧号格式为5位字符串
+        frame_key = str(contact["frame"]).zfill(5)
+        gt = gt_result.get(frame_key)
         if gt is None:
             continue
-        for pred in preds:
-            if pred["Left"] == gt["Left"] and pred["Right"] == gt["Right"]:
-                correct += 1
-            else:
-                wrong_frames.append({
-                    "frame": frame,
-                    "vlm": pred,
-                    "gt": gt
-                })
-            total += 1
+        if contact.get("r_contact") == gt["r_contact"] and contact.get("l_contact") == gt["l_contact"]:
+            correct += 1
+        else:
+            wrong_frames.append({
+                "frame": frame_key,
+                "vlm": contact,
+                "gt": gt
+            })
+        total += 1
     acc = correct / total if total > 0 else 0
     return acc, wrong_frames
 
 
-def parse_result_str(result_str):
-    """
-    将模型输出的字符串解析为Python字典
-    """
-    result = {}
-    # 去掉大括号和多余空白
-    result_str = result_str.strip().strip('{}').strip()
-    # 按行分割
-    for line in result_str.split('\n'):
-        line = line.strip()
-        if not line:
-            continue
-        # 匹配帧号和左右手
-        m = re.match(r'(\d+): Left:(\w+), Right:(\w+)', line)
-        if m:
-            frame, left, right = m.groups()
-            result[frame] = {'Left': left.lower() == 'true', 'Right': right.lower() == 'true'}
-    return result
+import json
+from collections import defaultdict
 
-
-
-# 假设 qwen_results = {img_name: result_str, ...}
 def parse_all_results(qwen_results):
-    all_preds = defaultdict(list)
-    for img_name, result_str in qwen_results.items():
-        parsed = parse_result_str(result_str)
-        for frame, pred in parsed.items():
-            all_preds[frame].append(pred)
-    return all_preds
+    frame_contacts = {}
+    appeared_set = set()
+    contact_pattern = re.compile(
+        r'"frame"\s*:\s*(\d+),\s*"r_contact"\s*:\s*(true|false),\s*"l_contact"\s*:\s*(true|false)'
+    )
 
-# 假设你的qwen_results如下
-# qwen_results = {...}
+    for img_name, result_str in qwen_results.items():
+        if "contacts" not in result_str:
+            print(f"警告: {img_name} 缺少 contacts 字段")
+            continue
+
+        for m in contact_pattern.finditer(result_str):
+            try:
+                frame = int(m.group(1))
+                r_contact = m.group(2) == "true"
+                l_contact = m.group(3) == "true"
+            except (IndexError, ValueError):
+                print(f"跳过 {img_name} 的无效 contact 数据: {m.group()}")
+                continue
+
+            # 记录出现的手
+            if r_contact:
+                appeared_set.add("right")
+            if l_contact:
+                appeared_set.add("left")
+
+            # 冲突检测
+            if frame not in frame_contacts:
+                frame_contacts[frame] = {
+                    "frame": frame,  # 显式存储 frame
+                    "r_contact": r_contact,
+                    "l_contact": l_contact,
+                    "conflict": False
+                }
+            else:
+                existing = frame_contacts[frame]
+                if (existing["r_contact"] != r_contact or
+                    existing["l_contact"] != l_contact):
+                    existing["conflict"] = True
+                    existing["r_contact"] = False
+                    existing["l_contact"] = False
+
+    # 生成最终 contacts 列表（确保包含 frame）
+    contacts = []
+    for frame in sorted(frame_contacts.keys()):
+        contact = frame_contacts[frame]
+        contacts.append({
+            "frame": contact["frame"],  # 强制包含 frame
+            "r_contact": contact["r_contact"],
+            "l_contact": contact["l_contact"]
+        })
+
+    return {
+        "frames_cnt": len(contacts),
+        "appeared": sorted([hand for hand in appeared_set if any(
+            contact["r_contact"] or contact["l_contact"] 
+            for contact in contacts
+        )]),
+        "contacts": contacts
+    }
+    
+
+def save_vlm_result_to_json(vlm_result, out_path):
+    """
+    直接保存标准结构（已解析好的字典）
+    """
+    with open(out_path, "w") as f:
+        json.dump(vlm_result, f, indent=2, ensure_ascii=False)
+        
+
+def count_files(directory):
+        try:
+            return sum(
+                1 for entry in os.listdir(directory)
+                if os.path.isfile(os.path.join(directory, entry))  # 确保是文件
+                and "RGBD" in entry
+                and entry.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))  # 匹配图片格式
+            )
+        except FileNotFoundError:
+            print(f"目录 '{directory}' 不存在")
+            return 0
+
 
 class Qwen:
     """
@@ -245,6 +305,8 @@ prompt = """
     with a random starting point.
 
     Based on the perspective information, please compare these frames and answer question twice, once for left hand of human and once for right hand of human.
+    Please first determine whether the left hand and right hand appear in the video sequence.  
+    If a hand does not appear in any frame, mark it as not appeared. 
 
     starts from the first 2 of K, determine for the left / right hand in this interval:
     (true) the hand is contacting the object in this frame.
@@ -252,6 +314,7 @@ prompt = """
 
     then, based on your answer for each pair, please output 2 * K answers in the following format.
     here is an example of K=4:
+        Both hands appear in the K frames.
         for left hand:
             at frame 00010, the left hand is not contacting the object;
             at frame 00020, the left hand starts contacting the object and keeps contacting it until frame 00030;
@@ -264,10 +327,14 @@ prompt = """
     then the correct format is:
 
         {
-            00010: Left:true, Right:true
-            00020: Left:false, Right:true
-            00030: Left:false, Right:true
-            00040: Left:true, Right:false
+            "frames_cnt": 4,
+            "appeared": ["left", "right"],  // or ["left"], ["right"], or []
+            "contacts": [
+                {"frame": 10, "r_contact": true, "l_contact": false},
+                {"frame": 20, "r_contact": true, "l_contact": true},
+                {"frame": 30, "r_contact": true, "l_contact": true},
+                {"frame": 40, "r_contact": false, "l_contact": false}
+            ]
         }
 
     In situations where you are not highly confident about whether contact occurs, you should prefer choice false rather than true.
@@ -285,14 +352,18 @@ finally, if I uploaded multiple (merged) images, please output the answer for ea
 def main():
     
     qwen_results = {}  # 用于存储每张图片的推理结果
+    folder_path = f"/home/ubuntu/gnaq-proj/api/output/rsrd_nerfgun/seqk3k1"
      
     
-    for i in range(1, 31):
+    for i in range(1, count_files(folder_path)+1):
+    # test
+    # for i in range(1, 4):
         """
         测试多模态模型读取图片并生成文本
         """
         print(f"i = {i}")
-        image_path = f"/home/ubuntu/gnaq-proj/api/output/rsrd_redbox/k3k1r100/sampleRGBD_{i}.jpg"  # 替换为你的图片路径
+        image_path = f"sampleRGBD_{i}.jpg"  # 替换为你的图片路径
+        path = os.path.join(folder_path, image_path)
         
 
         # print("=== GPT-4o 多模态 ===")
@@ -307,17 +378,19 @@ def main():
         
         print("=== Qwen 多模态 ===")
         qwen = QwenSingle()
-        qwen_response = qwen.request_with_image(prompt, image_path)
+        qwen_response = qwen.request_with_image(prompt, path)
         print("QwenSingle:", qwen_response)
         
         # 存储到字典，key为图片名，value为模型输出
-        qwen_results[os.path.basename(image_path)] = qwen_response
+        qwen_results[os.path.basename(path)] = qwen_response
         
     # 合并所有图片的帧为一个vlm_result
     vlm_result = parse_all_results(qwen_results)
     print(vlm_result)
     
-    gt_result = load_gt_contacts("/home/ubuntu/gnaq_release/rsrd/rsrd_redbox/processed/ho_contact.json")
+    save_vlm_result_to_json(vlm_result, "./output/rsrd_nerfgun/ho_contact.json")
+     
+    gt_result = load_gt_contacts("/home/ubuntu/gnaq_release/rsrd/rsrd_nerfgun/processed/ho_contact.json")
     acc, wrong_frames = calc_vlm_accuracy_multi(vlm_result, gt_result)
     
     print("Accuracy: {:.4f}".format(acc))
@@ -339,3 +412,7 @@ if __name__ == '__main__':
     main()
     
     
+"""
+改三个地方的path: gt_result, img_path, save_json
+改iter次数: range
+"""

@@ -1,0 +1,33 @@
+{
+  "frames_cnt": 5,
+  "appeared": [
+    "right"
+  ],
+  "contacts": [
+    {
+      "frame": 0,
+      "r_contact": true,
+      "l_contact": false
+    },
+    {
+      "frame": 1,
+      "r_contact": true,
+      "l_contact": false
+    },
+    {
+      "frame": 2,
+      "r_contact": true,
+      "l_contact": false
+    },
+    {
+      "frame": 3,
+      "r_contact": true,
+      "l_contact": false
+    },
+    {
+      "frame": 4,
+      "r_contact": true,
+      "l_contact": false
+    }
+  ]
+}
