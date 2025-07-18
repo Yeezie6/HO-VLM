@@ -1,0 +1,1338 @@
+{
+  "frames_cnt": 93,
+  "appeared": [
+    "left",
+    "right"
+  ],
+  "contacts": [
+    {
+      "frame": 1,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 2,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 3,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 4,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 5,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 6,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 7,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 8,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 9,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "thumb"
+      ]
+    },
+    {
+      "frame": 10,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index"
+      ]
+    },
+    {
+      "frame": 11,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index"
+      ]
+    },
+    {
+      "frame": 12,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 13,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 14,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 15,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 16,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "thumb"
+      ]
+    },
+    {
+      "frame": 17,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "thumb"
+      ]
+    },
+    {
+      "frame": 18,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "thumb"
+      ]
+    },
+    {
+      "frame": 19,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "thumb"
+      ]
+    },
+    {
+      "frame": 20,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 21,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 22,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 23,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 24,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 25,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 26,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 27,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 28,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 29,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 30,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 31,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 32,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 33,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 34,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 35,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 36,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 37,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 38,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 39,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 40,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 41,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 42,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 43,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 44,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 45,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 46,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 47,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 48,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 49,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 50,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 51,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 52,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 53,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 54,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 55,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 56,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 57,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 58,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 59,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 60,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 61,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 62,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 63,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 64,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 65,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 66,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 67,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 68,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 69,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 70,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 71,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 72,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 73,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 74,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 75,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 76,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": []
+    },
+    {
+      "frame": 77,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 78,
+      "r_contact": true,
+      "l_contact": false,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 79,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 80,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 81,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 82,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 83,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 84,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 85,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 86,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 87,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 88,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 89,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 90,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 91,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 92,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 93,
+      "r_contact": true,
+      "l_contact": true,
+      "r_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ],
+      "l_fingers": [
+        "index",
+        "middle",
+        "thumb"
+      ]
+    }
+  ],
+  "contact_segments": {
+    "left": [
+      {
+        "start": 1,
+        "end": 7,
+        "fingers": [
+          "index",
+          "thumb"
+        ]
+      },
+      {
+        "start": 18,
+        "end": 27,
+        "fingers": [
+          "index",
+          "thumb"
+        ]
+      },
+      {
+        "start": 30,
+        "end": 67,
+        "fingers": [
+          "index",
+          "middle",
+          "thumb"
+        ]
+      },
+      {
+        "start": 79,
+        "end": 93,
+        "fingers": [
+          "index",
+          "middle",
+          "thumb"
+        ]
+      }
+    ],
+    "right": [
+      {
+        "start": 1,
+        "end": 93,
+        "fingers": [
+          "index",
+          "middle",
+          "thumb"
+        ]
+      }
+    ]
+  }
+}

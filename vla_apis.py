@@ -34,12 +34,12 @@ def calc_vlm_accuracy_multi(vlm_result, gt_result):
     计算VLM输出与GT的准确率，只要左右手都正确才算该帧正确
     支持vlm_result["contacts"]为list，每个元素包含frame, r_contact, l_contact
     gt_result为dict，key为帧号字符串（如'00031'），value为左右手接触dict
+    wrong_frames 只输出 frame, l_contact, r_contact
     """
     total = 0
     correct = 0
     wrong_frames = []
     for contact in vlm_result["contacts"]:
-        # 统一帧号格式为5位字符串
         frame_key = str(contact["frame"]).zfill(5)
         gt = gt_result.get(frame_key)
         if gt is None:
@@ -49,8 +49,10 @@ def calc_vlm_accuracy_multi(vlm_result, gt_result):
         else:
             wrong_frames.append({
                 "frame": frame_key,
-                "vlm": contact,
-                "gt": gt
+                "vlm_l_contact": contact.get("l_contact"),
+                "vlm_r_contact": contact.get("r_contact"),
+                "gt_l_contact": gt["l_contact"],
+                "gt_r_contact": gt["r_contact"]
             })
         total += 1
     acc = correct / total if total > 0 else 0
@@ -253,6 +255,40 @@ class GPT:
         return result.choices[0].message.content
         
 
+class QwenPerspective:
+    """
+    判断人称视角，根据所有图片
+    """
+    def __init__(self):
+        self.api_key = "sk-266647a45f5c43359ad636d536ea657d"
+        self.model = "qwen-vl-max-latest"
+
+    def request_with_images(self, prompt, image_paths, image_format="jpg"):
+        image_contents = []
+        for path in image_paths:
+            base64_img = encode_image(path)
+            image_contents.append({"image": f"data:image/{image_format};base64,{base64_img}"})
+            print(path)
+        image_contents.append({"text": prompt})
+
+        messages = [
+            {"role": "system", "content": [{"text": "You are a helpful assistant."}]},
+            {"role": "user", "content": image_contents}
+        ]
+        response = MultiModalConversation.call(
+            api_key=self.api_key,
+            model=self.model,
+            messages=messages,
+            parameters={"vl_high_resolution_images": True}
+        )
+
+        # print("response:", response)
+        # if not response or not getattr(response, "output", None):
+        #     print("Warning: response or response.output is None")
+        #     return ""
+        
+        return response.output.choices[0].message.content[0]["text"]
+
 
 class QwenSingle:
     """
@@ -285,6 +321,11 @@ class QwenSingle:
             messages=messages,
             vl_high_resolution_images=True
         )
+        
+        # print("response:", response)
+        # if not response or not getattr(response, "output", None):
+        #     print("Warning: response or response.output is None")
+        #     return ""
         # 返回文本内容
         return response.output.choices[0].message.content[0]["text"]
     
@@ -302,7 +343,7 @@ class QwenMulti:
         for path in image_paths:
             base64_img = encode_image(path)
             image_contents.append({"image": f"data:image/{image_format};base64,{base64_img}"})
-            print(path)
+            # print(path)
         image_contents.append({"text": prompt})
 
         messages = [
@@ -315,12 +356,31 @@ class QwenMulti:
             messages=messages,
             parameters={"vl_high_resolution_images": True}
         )
+        
+        # print("response:", response)
+        # if not response or not getattr(response, "output", None):
+        #     print("Warning: response or response.output is None")
+        #     return ""
 
         return response.output.choices[0].message.content[0]["text"]
-        
+      
+      
+prompt_perspective = """
+You are given a set of images sampled from a video about a human manipulating an articulated object.
+Please determine whether this video is from a first-person perspective or a third-person perspective.
+A first-person perspective means the video is filmed from the operator's point of view, usually showing the operator's arms extending from the bottom or sides of the frame, and the viewpoint is aligned with the operator's head direction.
+A third-person perspective means the video is filmed from an observer's point of view, usually showing the whole or most of the operator's body, and the viewpoint is not aligned with the operator's head direction.
+Here are some judgment principles:
+    1. If only one hand appears, it must be first-person perspective.
+    2. If a human face appears, it must be third-person perspective.
+    3. In first-person perspective, the hand(s) usually occupy a large area of the image.
+If it is first-person perspective, output only the number 1.
+If it is third-person perspective, output only the number 3.
+Do not output any other text or explanation.
+"""
+  
 
 prompt = """
-    this is a horizontally merged sequence of K selected frame from a video which is from a first-person perspective.
     in the video, a person is interacting with an articulated object.
     there are black bars between each two frames in all of these K frames.
     the first row is the RGB frames, and the second row is the depth frames.
@@ -360,7 +420,7 @@ prompt = """
             ]
         }
 
-    In situations where you are not highly confident about whether contact occurs, you should prefer choice false rather than true.
+    If you are not highly confident about the contact status, please prefer false.
     please do not output any information other than that format.
     
     For each frame, in addition to predicting the hand-object contact status (appeared, frame), please also predict which fingers (only thumb, index, middle) of each hand are contacting the object.  
@@ -373,11 +433,14 @@ prompt = """
         "r_fingers": ["thumb", "index"],  // right hand fingers in contact
         "l_fingers": []                   // left hand fingers in contact
     }
+    
+    You cannot contradict yourself. 
+    For example, if you determine that the left hand is not in contact with the object, then there should not be any fingers of the left hand marked as contacting the object (the same applies to the right hand).
 """
 
 # QwenMulti add on
 """
-finally, if I uploaded multiple (merged) images, please output the answer for each image in a new line.
+    finally, if I uploaded multiple (merged) images, please output the answer for each image in a new line.
     For the contact information of all frames contained in the input images, please check for consistency before outputting the results, to avoid self-contradictory situations where a frame is marked as both false and true. 
     If any inconsistency is found during the check, you need to re-analyze and ensure consistency; when re-analyzing, you should prefer to judge as false.
     please use the global information to reason the images. For example, you should leverage all images in the input to reason about the contact status in the first image.
@@ -386,8 +449,33 @@ finally, if I uploaded multiple (merged) images, please output the answer for ea
 def main():
     
     qwen_results = {}  # 用于存储每张图片的推理结果
-    folder_path = f"/home/ubuntu/gnaq-proj/api/output/rsrd_nerfgun/seqk3k1"
-     
+    folder_path = f"/home/ubuntu/gnaq-proj/api/output/rsrd_redbox/seqk3k1"
+    
+    
+    image_paths = [
+        os.path.join(folder_path, fname)
+        for fname in natsorted(os.listdir(folder_path))
+        if "RGBD" in fname and fname.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))
+    ][:10]
+    for i in range(1, 11):
+        print("=== QwenPerspective 多模态 ===")
+        qwenp = QwenPerspective()
+        qwen_response_p = qwenp.request_with_images(prompt_perspective, image_paths)
+        print("QwenPerspective:", qwen_response_p)
+
+        # 解析人称视角
+        perspective = str(qwen_response_p).strip()
+        if perspective not in ["1", "3"]:
+            print("Warning: QwenPerspective output not recognized, defaulting to 1st person.")
+            perspective = "1"  
+        print(perspective)
+        
+    prompt_with_perspective = f"""
+    this is a horizontally merged sequence of K selected frame from a video which id from a {'third' if perspective == '3' else 'first'}-person perspective.
+    {prompt}
+    """
+    
+    # print(prompt_with_perspective)
     
     for i in range(1, count_files(folder_path)+1):
     # test
@@ -412,7 +500,7 @@ def main():
         
         print("=== Qwen 多模态 ===")
         qwen = QwenSingle()
-        qwen_response = qwen.request_with_image(prompt, path)
+        qwen_response = qwen.request_with_image(prompt_with_perspective, path)
         print("QwenSingle:", qwen_response)
         
         # 存储到字典，key为图片名，value为模型输出
@@ -425,11 +513,24 @@ def main():
         "right": get_contact_segments(vlm_result["contacts"], "r")
     }
     
-    print(vlm_result)
+    # print(vlm_result)
+    # 如果某只手的appeared是false，则所有帧该手的fingers都置为[]
+    appeared = set(vlm_result.get("appeared", []))
+    for contact in vlm_result["contacts"]:
+        if "left" not in appeared:
+            contact["l_fingers"] = []
+        if "right" not in appeared:
+            contact["r_fingers"] = []
+    # contact_segments 也要处理
+    for seg in vlm_result["contact_segments"].get("left", []):
+        if "left" not in appeared:
+            seg["fingers"] = []
+    for seg in vlm_result["contact_segments"].get("right", []):
+        if "right" not in appeared:
+            seg["fingers"] = []
+    save_vlm_result_to_json(vlm_result, "./output/rsrd_redbox/ho_contact.json")
     
-    save_vlm_result_to_json(vlm_result, "./output/rsrd_nerfgun/ho_contact.json")
-     
-    gt_result = load_gt_contacts("/home/ubuntu/gnaq_release/rsrd/rsrd_nerfgun/processed/ho_contact.json")
+    gt_result = load_gt_contacts("/home/ubuntu/gnaq_release/rsrd/rsrd_redbox/processed/ho_contact.json")
     acc, wrong_frames = calc_vlm_accuracy_multi(vlm_result, gt_result)
     
     print("Accuracy: {:.4f}".format(acc))
@@ -457,5 +558,4 @@ if __name__ == '__main__':
     
 """
 改三个地方的path: gt_result, img_path, save_json
-改iter次数: range
 """
