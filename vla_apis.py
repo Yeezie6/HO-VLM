@@ -71,9 +71,8 @@ def parse_all_results(qwen_results):
     appeared_set = set()
     # 支持 fingers 字段的正则
     contact_pattern = re.compile(
-        r'"frame"\s*:\s*(\d+),\s*"r_contact"\s*:\s*(true|false),\s*"l_contact"\s*:\s*(true|false)(?:,\s*"r_fingers"\s*:\s*\[([^\]]*)\])?(?:,\s*"l_fingers"\s*:\s*\[([^\]]*)\])?'
+        r'"frame"\s*:\s*"?(\d+)"?,\s*"r_contact"\s*:\s*(true|false),\s*"l_contact"\s*:\s*(true|false)(?:,\s*"r_fingers"\s*:\s*\[([^\]]*)\])?(?:,\s*"l_fingers"\s*:\s*\[([^\]]*)\])?'
     )
-
     for img_name, result_str in qwen_results.items():
         for m in contact_pattern.finditer(result_str):
             frame = int(m.group(1))
@@ -367,19 +366,24 @@ class QwenMulti:
       
       
 prompt_perspective = """
-You are given a set of images sampled from a video about a human manipulating an articulated object.
-Please determine whether this video is from a first-person perspective or a third-person perspective.
-A first-person perspective means the video is filmed from the operator's point of view, usually showing the operator's arms or hands extending from the bottom or sides of the frame, and the viewpoint is aligned with the operator's head direction.
-A third-person perspective means the video is filmed from an observer's point of view, usually showing the whole or most of the operator's body, and the viewpoint is not aligned with the operator's head direction.
-Here are some judgment principles:
-    1. If only one hand appears, it must be first-person perspective.
-    2. If a human face appears, it must be third-person perspective.
-    3. In first-person perspective, the hand(s) usually occupy a large area of the image.
-If it is first-person perspective, output only the number 1.
-If it is third-person perspective, output only the number 3.
-Do not output any other text or explanation.
+    You are given a set of images sampled from a video about a human manipulating an articulated object.
+    Please determine whether this video is from a first-person perspective or a third-person perspective.
+    A first-person perspective means the video is filmed from the operator's point of view, usually showing the operator's arms or hands extending from the bottom or sides of the frame, and the viewpoint is aligned with the operator's head direction.
+    A third-person perspective means the video is filmed from an observer's point of view, usually showing the whole or most of the operator's body, and the viewpoint is not aligned with the operator's head direction.
+    Here are some judgment principles:
+        1. If only one hand appears, it must be first-person perspective.
+        2. If a human face appears, it must be third-person perspective.
+        3. In first-person perspective, the hand(s) usually occupy a large area of the image.
+    If it is first-person perspective, output only the number 1.
+    If it is third-person perspective, output only the number 3.
+    Do not output any other text or explanation.
 """
-  
+
+
+prompt_change = """
+Please note that in a sequence of consecutive frames, the contact status between the hand and the object may change from one frame to another. Do not simply output the same contact status (all true or all false) for all frames unless the visual evidence is truly identical. Carefully observe each frame and make an independent judgment for each one, considering possible changes in hand-object contact across adjacent frames.
+"""
+
 
 prompt = """
     in the video, a person is interacting with an articulated object.
@@ -396,7 +400,9 @@ prompt = """
     starts from the first 2 of K, determine for the left / right hand in this interval:
     (true) the hand is contacting the object in this frame.
     (false) the hand is not contacting the object in this frame.
+    
     When you are not sure whether hand-object contact occurs, prefer false.
+    
     then, based on your answer for each pair, please output 2 * K answers in the following format.
     here is an example of K=4:
         Both hands appear in the K frames.
@@ -436,8 +442,7 @@ prompt = """
     }
 """
 
-# QwenMulti add on
-"""
+prompt_multi_img = """
     finally, if I uploaded multiple (merged) images, please output the answer for each image in a new line.
     For the contact information of all frames contained in the input images, please check for consistency before outputting the results, to avoid self-contradictory situations where a frame is marked as both false and true. 
     If any inconsistency is found during the check, you need to re-analyze and ensure consistency; when re-analyzing, you should prefer to judge as false.
@@ -445,7 +450,7 @@ prompt = """
 """
 
 
-ds = "rsrd_ledlight"
+ds = "rsrd_nerfgun"
 
 
 def main():
@@ -484,7 +489,7 @@ def main():
         )
         
     prompt_with_perspective = f"""
-    this is a horizontally merged sequence of K selected frame from a video which id from a {'third' if perspective == '3' else 'first'}-person perspective.
+        this is a horizontally merged sequence of K selected frame from a video which id from a {'third' if perspective == '3' else 'first'}-person perspective.
     {hand_hint}
     {prompt}
     """
