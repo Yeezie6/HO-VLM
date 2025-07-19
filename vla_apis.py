@@ -450,7 +450,7 @@ prompt_multi_img = """
 """
 
 
-ds = "rsrd_nerfgun"
+ds = "rsrd_ledlight"
 
 
 def main():
@@ -464,7 +464,7 @@ def main():
         for fname in natsorted(os.listdir(folder_path))
         if "RGBD" in fname and fname.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))
     ][:10]
-    for i in range(1, 11):
+    for i in range(1, 2):
         print("=== QwenPerspective 多模态 ===")
         qwenp = QwenPerspective()
         qwen_response_p = qwenp.request_with_images(prompt_perspective, image_paths)
@@ -479,12 +479,12 @@ def main():
     
     if perspective == "3":
         hand_hint = (
-            "In third-person perspective, the left hand of the person usually appears on the right side of the image, "
+            "In third-person perspective, the left hand of the person usually appears on the right side of the object, "
             "and the right hand appears on the left side of the image, as seen from the observer’s viewpoint."
         )
     else:
         hand_hint = (
-            "In first-person perspective, the left hand of the person appears on the left side of the image, "
+            "In first-person perspective, the left hand of the person appears on the left side of the object, "
             "and the right hand appears on the right side, due to the camera facing outward from the operator’s viewpoint."
         )
         
@@ -498,10 +498,15 @@ def main():
     
     for i in range(1, count_files(folder_path)+1):
     # test
-    # for i in range(1, 4):
+    # for i in range(104, 107):
         """
         测试多模态模型读取图片并生成文本
         """
+        if (i - 1) % 80 == 0 and i != 1:
+           print("已处理80张图片，休息1分钟以缓解API压力...")
+           time.sleep(60)
+
+        
         print(f"i = {i}")
         image_path = f"sampleRGBD_{i}.jpg"  # 替换为你的图片路径
         path = os.path.join(folder_path, image_path)
