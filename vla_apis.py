@@ -65,7 +65,7 @@ from collections import defaultdict
 def parse_all_results(qwen_results):
     """
     合并所有图片的VLM输出为标准结构，支持手指信息
-    对于重复帧，contact为False优先，否则为True，手指信息合并去重
+    对于重复帧，contact采用少数服从多数，若true/false一样多则取false，手指信息合并去重
     """
     frame_contacts = defaultdict(list)
     appeared_set = set()
@@ -92,15 +92,17 @@ def parse_all_results(qwen_results):
             if l_contact:
                 appeared_set.add("left")
 
-    # 合并同帧的结果，False优先，手指合并去重
+    # 合并同帧的结果，少数服从多数，平票取False，手指合并去重
     contacts = []
     for frame in sorted(frame_contacts.keys()):
         items = frame_contacts[frame]
-        r_contact = any(item["r_contact"] for item in items)
-        l_contact = any(item["l_contact"] for item in items)
-        # False优先
-        r_contact = False if any(not item["r_contact"] for item in items) else True
-        l_contact = False if any(not item["l_contact"] for item in items) else True
+        r_true = sum(item["r_contact"] for item in items)
+        r_false = len(items) - r_true
+        l_true = sum(item["l_contact"] for item in items)
+        l_false = len(items) - l_true
+        # 多数为True，否则False，平票取False
+        r_contact = True if r_true > r_false else False
+        l_contact = True if l_true > l_false else False
         # 合并手指
         r_fingers = set()
         l_fingers = set()
@@ -120,7 +122,6 @@ def parse_all_results(qwen_results):
         "appeared": sorted(list(appeared_set)),
         "contacts": contacts
     }
-    
 
 def get_contact_segments(contacts, hand):
     segments = []
@@ -368,7 +369,7 @@ class QwenMulti:
 prompt_perspective = """
 You are given a set of images sampled from a video about a human manipulating an articulated object.
 Please determine whether this video is from a first-person perspective or a third-person perspective.
-A first-person perspective means the video is filmed from the operator's point of view, usually showing the operator's arms extending from the bottom or sides of the frame, and the viewpoint is aligned with the operator's head direction.
+A first-person perspective means the video is filmed from the operator's point of view, usually showing the operator's arms or hands extending from the bottom or sides of the frame, and the viewpoint is aligned with the operator's head direction.
 A third-person perspective means the video is filmed from an observer's point of view, usually showing the whole or most of the operator's body, and the viewpoint is not aligned with the operator's head direction.
 Here are some judgment principles:
     1. If only one hand appears, it must be first-person perspective.
@@ -387,14 +388,15 @@ prompt = """
     the selecting method is using a fixed interval to select K frames from the video, 
     with a random starting point.
 
-    Based on the perspective information, please compare these frames and answer question twice, once for left hand of human and once for right hand of human.
-    Please first determine whether the left hand and right hand appear in the video sequence.  
-    If a hand does not appear in any frame, mark it as not appeared. 
+    Based on the perspective information, please firstly accurately distinguish between the left and right hands in each frame. If only one hand appears, please determine whether it is the left hand or the right hand.
+    Then please determine whether the left hand and right hand appear in the video frame sequence. if a hand does not appear in any frame, mark it as not appeared. 
+    Please compare these frames and answer question twice, once for left hand of human and once for right hand of human. 
+    
 
     starts from the first 2 of K, determine for the left / right hand in this interval:
     (true) the hand is contacting the object in this frame.
     (false) the hand is not contacting the object in this frame.
-
+    When you are not sure whether hand-object contact occurs, prefer false.
     then, based on your answer for each pair, please output 2 * K answers in the following format.
     here is an example of K=4:
         Both hands appear in the K frames.
@@ -419,8 +421,7 @@ prompt = """
                 {"frame": 40, "r_contact": false, "l_contact": false}
             ]
         }
-
-    If you are not highly confident about the contact status, please prefer false.
+    
     please do not output any information other than that format.
     
     For each frame, in addition to predicting the hand-object contact status (appeared, frame), please also predict which fingers (only thumb, index, middle) of each hand are contacting the object.  
@@ -433,9 +434,6 @@ prompt = """
         "r_fingers": ["thumb", "index"],  // right hand fingers in contact
         "l_fingers": []                   // left hand fingers in contact
     }
-    
-    You cannot contradict yourself. 
-    For example, if you determine that the left hand is not in contact with the object, then there should not be any fingers of the left hand marked as contacting the object (the same applies to the right hand).
 """
 
 # QwenMulti add on
@@ -445,11 +443,15 @@ prompt = """
     If any inconsistency is found during the check, you need to re-analyze and ensure consistency; when re-analyzing, you should prefer to judge as false.
     please use the global information to reason the images. For example, you should leverage all images in the input to reason about the contact status in the first image.
 """
- 
+
+
+ds = "rsrd_ledlight"
+
+
 def main():
     
     qwen_results = {}  # 用于存储每张图片的推理结果
-    folder_path = f"/home/ubuntu/gnaq-proj/api/output/rsrd_redbox/seqk3k1"
+    folder_path = f"/home/ubuntu/gnaq-proj/api/output/{ds}/seqk3k1"
     
     
     image_paths = [
@@ -469,9 +471,21 @@ def main():
             print("Warning: QwenPerspective output not recognized, defaulting to 1st person.")
             perspective = "1"  
         print(perspective)
+    
+    if perspective == "3":
+        hand_hint = (
+            "In third-person perspective, the left hand of the person usually appears on the right side of the image, "
+            "and the right hand appears on the left side of the image, as seen from the observer’s viewpoint."
+        )
+    else:
+        hand_hint = (
+            "In first-person perspective, the left hand of the person appears on the left side of the image, "
+            "and the right hand appears on the right side, due to the camera facing outward from the operator’s viewpoint."
+        )
         
     prompt_with_perspective = f"""
     this is a horizontally merged sequence of K selected frame from a video which id from a {'third' if perspective == '3' else 'first'}-person perspective.
+    {hand_hint}
     {prompt}
     """
     
@@ -528,9 +542,9 @@ def main():
     for seg in vlm_result["contact_segments"].get("right", []):
         if "right" not in appeared:
             seg["fingers"] = []
-    save_vlm_result_to_json(vlm_result, "./output/rsrd_redbox/ho_contact.json")
+    save_vlm_result_to_json(vlm_result, f"./output/{ds}/ho_contact.json")
     
-    gt_result = load_gt_contacts("/home/ubuntu/gnaq_release/rsrd/rsrd_redbox/processed/ho_contact.json")
+    gt_result = load_gt_contacts(f"/home/ubuntu/gnaq_release/rsrd/{ds}/processed/ho_contact.json")
     acc, wrong_frames = calc_vlm_accuracy_multi(vlm_result, gt_result)
     
     print("Accuracy: {:.4f}".format(acc))
@@ -557,5 +571,5 @@ if __name__ == '__main__':
     
     
 """
-改三个地方的path: gt_result, img_path, save_json
+改ds # type of dataset
 """
