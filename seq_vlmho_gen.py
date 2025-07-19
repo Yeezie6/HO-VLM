@@ -164,20 +164,11 @@ def main():
     
     img_tups = []
     dep_tups = []
-    for cur_id in samples:
-        if args.rand_k:
-            selected_indices = np.random.choice(len(img_paths), K, replace=False)
-        else:
-            selected_indices = [cur_id + interval * i for i in range(K) if cur_id + interval * i < len(img_paths)]
-            # 如果不足K帧，往前补齐
-            if len(selected_indices) < K:
-                need = K - len(selected_indices)
-                last_idx = selected_indices[-1] if selected_indices else len(img_paths) - 1
-                for j in range(need):
-                    idx = last_idx - (j + 1)
-                    if idx >= 0:
-                        selected_indices.append(idx)
-                selected_indices = sorted(selected_indices)
+    
+    # 新采样逻辑：严格取能完整覆盖的所有起点
+    max_start = len(img_paths) - (K - 1) * interval
+    for start in range(max_start):
+        selected_indices = [start + interval * i for i in range(K)]
         img_tups.append([(rgbs[i], img_paths[i]) for i in selected_indices])
         dep_tups.append([(Image.fromarray(depths_colorized[i]), img_paths[i]) for i in selected_indices])
     
