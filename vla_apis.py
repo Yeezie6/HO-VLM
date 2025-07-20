@@ -298,8 +298,7 @@ class QwenSingle:
         self.api_key = "sk-266647a45f5c43359ad636d536ea657d"
         self.model = "qwen-vl-max-latest"
     
-
-    def request_with_image(self, prompt, image_path):
+    def request_with_image(self, prompt, image_path, max_retries=5):
         base64_image = encode_image(image_path)
         messages = [
             {
@@ -314,20 +313,31 @@ class QwenSingle:
                 ]
             }
         ]
-        # 调用DashScope多模态接口，设置高分辨率参数
-        response = dashscope.MultiModalConversation.call(
-            api_key=self.api_key,
-            model=self.model,
-            messages=messages,
-            vl_high_resolution_images=True
-        )
-        
-        # print("response:", response)
-        # if not response or not getattr(response, "output", None):
-        #     print("Warning: response or response.output is None")
-        #     return ""
-        # 返回文本内容
-        return response.output.choices[0].message.content[0]["text"]
+        retry = 0
+        wait_time = 10  # 初始等待10秒
+        while retry < max_retries:
+            try:
+                response = dashscope.MultiModalConversation.call(
+                    api_key=self.api_key,
+                    model=self.model,
+                    messages=messages,
+                    vl_high_resolution_images=True
+                )
+                # 健壮性检查
+                if not response or not getattr(response, "output", None):
+                    print("Warning: response or response.output is None")
+                    raise Exception("Empty response")
+                if not response.output.choices or not response.output.choices[0].message.content:
+                    print("Warning: response.output.choices[0].message.content is empty")
+                    raise Exception("Empty choices")
+                return response.output.choices[0].message.content[0]["text"]
+            except Exception as e:
+                print(f"API调用异常: {e}，将在{wait_time}秒后重试（第{retry+1}次）")
+                time.sleep(wait_time)
+                wait_time *= 2  # 指数退避
+                retry += 1
+        print("API多次重试失败，跳过该图片。")
+        return ""
     
     
 class QwenMulti:
@@ -381,7 +391,7 @@ prompt_perspective = """
 
 
 prompt_change = """
-Please note that in a sequence of consecutive frames, the contact status between the hand and the object may change from one frame to another. Do not simply output the same contact status (all true or all false) for all frames unless the visual evidence is truly identical. Carefully observe each frame and make an independent judgment for each one, considering possible changes in hand-object contact across adjacent frames.
+Please note that in the given image, the contact status between the hand and the object may change from one frame to another. Do not simply output the same contact status (all true or all false) for all frames unless the visual evidence is truly identical. Carefully observe each frame and make an independent judgment for each one, considering possible changes in hand-object contact across adjacent frames.
 """
 
 
@@ -450,13 +460,14 @@ prompt_multi_img = """
 """
 
 
-ds = "rsrd_ledlight"
+ds = "rsrd_redbox"
+fd = "seqk3k1"
 
 
 def main():
     
     qwen_results = {}  # 用于存储每张图片的推理结果
-    folder_path = f"/home/ubuntu/gnaq-proj/api/output/{ds}/seqk3k1"
+    folder_path = f"/home/ubuntu/gnaq-proj/api/output/{ds}/{fd}"
     
     
     image_paths = [
@@ -502,9 +513,9 @@ def main():
         """
         测试多模态模型读取图片并生成文本
         """
-        if (i - 1) % 80 == 0 and i != 1:
-           print("已处理80张图片，休息1分钟以缓解API压力...")
-           time.sleep(60)
+        # if (i - 1) % 80 == 0 and i != 1:
+        #    print("已处理80张图片，休息1分钟以缓解API压力...")
+        #    time.sleep(60)
 
         
         print(f"i = {i}")
