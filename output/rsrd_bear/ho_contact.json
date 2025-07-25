@@ -1,5 +1,5 @@
 {
-  "frames_cnt": 138,
+  "frames_cnt": 149,
   "appeared": [
     "left"
   ],
@@ -23,7 +23,7 @@
     {
       "frame": 2,
       "r_contact": false,
-      "l_contact": false,
+      "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
         "index"
@@ -32,7 +32,7 @@
     {
       "frame": 3,
       "r_contact": false,
-      "l_contact": false,
+      "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
         "index"
@@ -41,7 +41,7 @@
     {
       "frame": 4,
       "r_contact": false,
-      "l_contact": false,
+      "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
         "index"
@@ -50,7 +50,7 @@
     {
       "frame": 5,
       "r_contact": false,
-      "l_contact": false,
+      "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
         "index"
@@ -59,7 +59,7 @@
     {
       "frame": 6,
       "r_contact": false,
-      "l_contact": false,
+      "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
         "index"
@@ -68,7 +68,7 @@
     {
       "frame": 7,
       "r_contact": false,
-      "l_contact": false,
+      "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
         "index"
@@ -77,7 +77,7 @@
     {
       "frame": 8,
       "r_contact": false,
-      "l_contact": true,
+      "l_contact": false,
       "r_fingers": [],
       "l_fingers": [
         "index"
@@ -95,11 +95,10 @@
     {
       "frame": 10,
       "r_contact": false,
-      "l_contact": false,
+      "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -108,18 +107,25 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
       "frame": 12,
       "r_contact": false,
-      "l_contact": true,
+      "l_contact": false,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
+      ]
+    },
+    {
+      "frame": 13,
+      "r_contact": false,
+      "l_contact": false,
+      "r_fingers": [],
+      "l_fingers": [
+        "index"
       ]
     },
     {
@@ -173,8 +179,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -203,6 +208,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
+        "index",
         "thumb"
       ]
     },
@@ -221,8 +227,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -490,7 +495,8 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index"
+        "index",
+        "thumb"
       ]
     },
     {
@@ -499,7 +505,8 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index"
+        "index",
+        "thumb"
       ]
     },
     {
@@ -508,7 +515,8 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index"
+        "index",
+        "thumb"
       ]
     },
     {
@@ -598,8 +606,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -608,8 +615,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -618,8 +624,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -628,8 +633,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -638,8 +642,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -801,8 +804,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -811,8 +813,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -821,8 +822,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -831,8 +831,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -841,8 +840,7 @@
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index",
-        "thumb"
+        "index"
       ]
     },
     {
@@ -1022,6 +1020,90 @@
       ]
     },
     {
+      "frame": 111,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index"
+      ]
+    },
+    {
+      "frame": 112,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index"
+      ]
+    },
+    {
+      "frame": 113,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index"
+      ]
+    },
+    {
+      "frame": 114,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index"
+      ]
+    },
+    {
+      "frame": 115,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index"
+      ]
+    },
+    {
+      "frame": 116,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index"
+      ]
+    },
+    {
+      "frame": 117,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 118,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
+      "frame": 119,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
       "frame": 120,
       "r_contact": false,
       "l_contact": true,
@@ -1092,12 +1174,23 @@
       ]
     },
     {
+      "frame": 127,
+      "r_contact": false,
+      "l_contact": true,
+      "r_fingers": [],
+      "l_fingers": [
+        "index",
+        "thumb"
+      ]
+    },
+    {
       "frame": 128,
       "r_contact": false,
       "l_contact": true,
       "r_fingers": [],
       "l_fingers": [
-        "index"
+        "index",
+        "thumb"
       ]
     },
     {
@@ -1169,7 +1262,7 @@
     {
       "frame": 136,
       "r_contact": false,
-      "l_contact": true,
+      "l_contact": false,
       "r_fingers": [],
       "l_fingers": [
         "index"
@@ -1208,19 +1301,14 @@
       "r_contact": false,
       "l_contact": false,
       "r_fingers": [],
-      "l_fingers": [
-        "index"
-      ]
+      "l_fingers": []
     },
     {
       "frame": 142,
       "r_contact": false,
       "l_contact": false,
       "r_fingers": [],
-      "l_fingers": [
-        "index",
-        "middle"
-      ]
+      "l_fingers": []
     },
     {
       "frame": 143,
@@ -1234,36 +1322,28 @@
       "r_contact": false,
       "l_contact": false,
       "r_fingers": [],
-      "l_fingers": [
-        "index"
-      ]
+      "l_fingers": []
     },
     {
       "frame": 145,
       "r_contact": false,
       "l_contact": false,
       "r_fingers": [],
-      "l_fingers": [
-        "index"
-      ]
+      "l_fingers": []
     },
     {
       "frame": 146,
       "r_contact": false,
       "l_contact": false,
       "r_fingers": [],
-      "l_fingers": [
-        "index"
-      ]
+      "l_fingers": []
     },
     {
       "frame": 147,
       "r_contact": false,
       "l_contact": false,
       "r_fingers": [],
-      "l_fingers": [
-        "index"
-      ]
+      "l_fingers": []
     },
     {
       "frame": 148,
@@ -1276,15 +1356,22 @@
   "contact_segments": {
     "left": [
       {
-        "start": 8,
-        "end": 8,
+        "start": 2,
+        "end": 7,
         "fingers": [
           "index"
         ]
       },
       {
-        "start": 11,
-        "end": 136,
+        "start": 10,
+        "end": 11,
+        "fingers": [
+          "index"
+        ]
+      },
+      {
+        "start": 14,
+        "end": 135,
         "fingers": [
           "index",
           "thumb"

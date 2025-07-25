@@ -460,7 +460,7 @@ prompt_multi_img = """
 """
 
 
-ds = "rsrd_redbox"
+ds = "ytb_waffle2"
 fd = "seqk3k1"
 
 
