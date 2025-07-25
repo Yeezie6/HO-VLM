@@ -1,14 +1,15 @@
 import os
 import shutil
 
-src_root = "/home/ubuntu/gnaq_release/rsrd/"
-dst_root = "./gt"
+# src_root = "/home/ubuntu/gnaq_release/rsrd/"
+src_root = "./output"
+dst_root = "./result"
 
 for folder in os.listdir(src_root):
     src_folder = os.path.join(src_root, folder)
     if not os.path.isdir(src_folder):
         continue
-    src_json = os.path.join(src_folder, "processed/ho_contact.json")
+    src_json = os.path.join(src_folder, "ho_contact.json")
     if not os.path.exists(src_json):
         continue
     dst_folder = os.path.join(dst_root, folder)
