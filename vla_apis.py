@@ -91,7 +91,7 @@ def parse_all_results(qwen_results):
             if l_contact:
                 appeared_set.add("left")
 
-    # 合并同帧的结果，少数服从多数，平票取False，手指合并去重
+    # 合并同帧的结果，手指contact采用出现次数最多的组合，平票取手指数少的，仍平票则取最后一个
     contacts = []
     for frame in sorted(frame_contacts.keys()):
         items = frame_contacts[frame]
@@ -102,18 +102,48 @@ def parse_all_results(qwen_results):
         # 多数为True，否则False，平票取False
         r_contact = True if r_true > r_false else False
         l_contact = True if l_true > l_false else False
-        # 合并手指
-        r_fingers = set()
-        l_fingers = set()
-        for item in items:
-            r_fingers.update(item["r_fingers"])
-            l_fingers.update(item["l_fingers"])
+
+        # 统计所有r_fingers组合出现次数
+        r_finger_counts = defaultdict(int)
+        r_finger_last_idx = {}
+        for idx, item in enumerate(items):
+            key = tuple(sorted(item["r_fingers"]))
+            r_finger_counts[key] += 1
+            r_finger_last_idx[key] = idx
+        # 找出现次数最多的组合
+        max_count = max(r_finger_counts.values()) if r_finger_counts else 0
+        candidates = [k for k, v in r_finger_counts.items() if v == max_count]
+        # 若有多个，选手指数少的
+        min_len = min(len(k) for k in candidates) if candidates else 0
+        candidates2 = [k for k in candidates if len(k) == min_len]
+        # 若还有多个，选最后出现的
+        if candidates2:
+            chosen_r_fingers = max(candidates2, key=lambda k: r_finger_last_idx[k])
+        else:
+            chosen_r_fingers = ()
+
+        # l_fingers同理
+        l_finger_counts = defaultdict(int)
+        l_finger_last_idx = {}
+        for idx, item in enumerate(items):
+            key = tuple(sorted(item["l_fingers"]))
+            l_finger_counts[key] += 1
+            l_finger_last_idx[key] = idx
+        max_count = max(l_finger_counts.values()) if l_finger_counts else 0
+        candidates = [k for k, v in l_finger_counts.items() if v == max_count]
+        min_len = min(len(k) for k in candidates) if candidates else 0
+        candidates2 = [k for k in candidates if len(k) == min_len]
+        if candidates2:
+            chosen_l_fingers = max(candidates2, key=lambda k: l_finger_last_idx[k])
+        else:
+            chosen_l_fingers = ()
+
         contacts.append({
             "frame": frame,
             "r_contact": r_contact,
             "l_contact": l_contact,
-            "r_fingers": sorted(list(r_fingers)),
-            "l_fingers": sorted(list(l_fingers))
+            "r_fingers": list(chosen_r_fingers),
+            "l_fingers": list(chosen_l_fingers)
         })
 
     return {
@@ -440,16 +470,21 @@ prompt = """
     
     please do not output any information other than that format.
     
-    For each frame, in addition to predicting the hand-object contact status (appeared, frame), please also predict which fingers (only thumb, index, middle) of each hand are contacting the object.  
-    Please add the finger contact information to the JSON output for each frame, in the following format:
+    For each frame, in addition to predicting whether the left and right hands are contacting the object, you must also independently determine for each hand which of the following fingers are in contact with the object: thumb, index finger, and middle finger. 
+    Please carefully observe the position, shape, and occlusion of each finger. If you are not sure whether a finger is in contact, prefer to mark it as not in contact.
+    If in frame 10, the left hand has only middle finger in contact with the object, and the right hand has the thumb, index finger and middle finger in contact with the object,
+    then output the result for each frame in the following JSON format:
 
     {
         "frame": 10,
         "r_contact": true,
         "l_contact": false,
-        "r_fingers": ["thumb", "index"],  // right hand fingers in contact
-        "l_fingers": []                   // left hand fingers in contact
+        "r_fingers": ["thumb", "index", "middle"],  // right hand fingers in contact
+        "l_fingers": ["middle"]                   // left hand fingers in contact
     }
+
+    Do not ignore the middle finger. If the middle finger is in contact, be sure to include 'middle' in the list.
+    If a finger is occluded or unclear, do not include it in the list. Only include a finger if you are confident it is in contact with the object.
 """
 
 prompt_multi_img = """
@@ -460,7 +495,7 @@ prompt_multi_img = """
 """
 
 
-ds = "ytb_waffle2"
+ds = "itw_cddrive"  # type of dataset
 fd = "seqk3k1"
 
 
@@ -491,12 +526,14 @@ def main():
     if perspective == "3":
         hand_hint = (
             "In third-person perspective, the left hand of the person usually appears on the right side of the object, "
-            "and the right hand appears on the left side of the image, as seen from the observer’s viewpoint."
+            "and the right hand appears on the left side, as seen from the observer’s viewpoint."
+            "If there is only one hand in the image, please distinguish the hand with the information above."
         )
     else:
         hand_hint = (
             "In first-person perspective, the left hand of the person appears on the left side of the object, "
             "and the right hand appears on the right side, due to the camera facing outward from the operator’s viewpoint."
+            "If there is only one hand in the image, please distinguish the hand with the information above."
         )
         
     prompt_with_perspective = f"""

@@ -1,7 +1,10 @@
 import os
 import shutil
 
+# cp gt
 # src_root = "/home/ubuntu/gnaq_release/rsrd/"
+
+# cp result
 src_root = "./output"
 dst_root = "./result"
 

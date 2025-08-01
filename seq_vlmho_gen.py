@@ -172,6 +172,34 @@ def main():
         img_tups.append([(rgbs[i], img_paths[i]) for i in selected_indices])
         dep_tups.append([(Image.fromarray(depths_colorized[i]), img_paths[i]) for i in selected_indices])
     
+    
+    
+    # split_pixel = 512  # 你可以根据实际需求设置
+
+    # img_tups = []
+    # dep_tups = []
+
+    # max_start = len(img_paths) - (K - 1) * interval
+    # for start in range(max_start):
+    #     selected_indices = [start + interval * i for i in range(K)]
+    #     img_group = []
+    #     dep_group = []
+    #     for i in selected_indices:
+    #         # RGB
+    #         img_group.append((rgbs[i], img_paths[i]))
+    #         # 深度图左右裁切
+    #         dep_img = Image.fromarray(depths_colorized[i])
+    #         w, h = dep_img.size
+    #         # left = dep_img.crop((0, 0, split_pixel, h))
+    #         right = dep_img.crop((split_pixel, 0, w, h))
+    #         # 你可以选择只保留一侧，或都保留
+    #         # 例如，这里保留左右两张
+    #         # dep_group.append((left, img_paths[i] + "_left"))
+    #         dep_group.append((right, img_paths[i] + "_right"))
+    #     img_tups.append(img_group)
+    #     dep_tups.append(dep_group)
+    
+    
     merged_rgb = merge_images_horizontally(img_tups)
     merged_depth = merge_images_horizontally(dep_tups)
     
