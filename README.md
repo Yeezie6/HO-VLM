@@ -16,7 +16,7 @@ python vla_apis.py
 ## Directory Structure
 
 ```
-datasets/robotwin2/
+HO-VLM/
 ├── vla_apis.py                     # **Main code** for contact info predicting by Qwen
 ├── vlmho_gen.py                    # samples, annotates, and merges RGB images and depth maps from a specified sequence folder, generating horizontally and vertically stitched sample images(**random** sample)
 ├── seq_vlmho_gen.py                # same function as vlmho_gen but sample in **sequence**
