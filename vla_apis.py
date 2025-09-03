@@ -483,8 +483,8 @@ prompt = """
         "l_fingers": ["middle"]                   // left hand fingers in contact
     }
 
-    Do not ignore the middle finger. If the middle finger is in contact, be sure to include 'middle' in the list.
-    If a finger is occluded or unclear, do not include it in the list. Only include a finger if you are confident it is in contact with the object.
+    Do not ignore the middle finger. If the middle finger is in contact with the object, be sure to include 'middle' in the list.
+    If a finger is occluded or unclear, do not include it in the list. Only include a finger if you are completely confident it is in contact with the object.
 """
 
 prompt_multi_img = """
@@ -495,7 +495,7 @@ prompt_multi_img = """
 """
 
 
-ds = "itw_cddrive"  # type of dataset
+ds = "rsrd_sunglasses"  # type of dataset
 fd = "seqk3k1"
 
 
@@ -505,6 +505,14 @@ def main():
     folder_path = f"/home/ubuntu/gnaq-proj/api/output/{ds}/{fd}"
     
     
+    # 打印seqk3k1文件夹的文件数目
+    seqk3k1_path = os.path.join(os.path.dirname(folder_path), "seqk3k1")
+    if os.path.exists(seqk3k1_path):
+        num_files = len([f for f in os.listdir(seqk3k1_path) if os.path.isfile(os.path.join(seqk3k1_path, f))])
+        print(f"RGBD image 数目: {int(num_files / 2)}")
+    else:
+        print(f"文件夹 {seqk3k1_path} 不存在")
+
     image_paths = [
         os.path.join(folder_path, fname)
         for fname in natsorted(os.listdir(folder_path))
@@ -515,6 +523,8 @@ def main():
         qwenp = QwenPerspective()
         qwen_response_p = qwenp.request_with_images(prompt_perspective, image_paths)
         print("QwenPerspective:", qwen_response_p)
+
+        print()
 
         # 解析人称视角
         perspective = str(qwen_response_p).strip()

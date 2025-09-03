@@ -1,3 +1,4 @@
+# 将指定序列文件夹中的RGB图片和深度图进行采样、标注、合并，生成横向和纵向拼接的样本图片，便于多模态模型推理和可视化。
 import os
 from natsort import natsorted
 from PIL import Image, ImageDraw, ImageFont

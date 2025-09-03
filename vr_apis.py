@@ -1,3 +1,4 @@
+# VLM判断视频HOI contact
 from openai import OpenAI
 import os
 import base64

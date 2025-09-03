@@ -1,3 +1,4 @@
+# 相比vlmho_gen而言是顺序采样
 import os
 from natsort import natsorted
 from PIL import Image, ImageDraw, ImageFont
