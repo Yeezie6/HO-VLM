@@ -470,21 +470,21 @@ prompt = """
     
     please do not output any information other than that format.
     
-    For each frame, in addition to predicting whether the left and right hands are contacting the object, you must also independently determine for each hand which of the following fingers are in contact with the object: the fingertips of the thumb, index finger, and middle finger. 
-    Please carefully observe the position, shape, and occlusion of each fingertip. If you are not sure whether a fingertip is in contact, prefer to mark it as not in contact.
-    If in frame 10, the left hand has only the middle fingertip in contact with the object, and the right hand has the thumb, index fingertip, and middle fingertip in contact with the object,
+    For each frame, in addition to predicting whether the left and right hands are contacting the object, you must also independently determine for each hand which of the following fingers are in contact with the object: thumb, index finger, and middle finger. 
+    Please carefully observe the position, shape, and occlusion of each finger. If you are not sure whether a finger is in contact, prefer to mark it as not in contact.
+    If in frame 10, the left hand has only middle finger in contact with the object, and the right hand has the thumb, index finger and middle finger in contact with the object,
     then output the result for each frame in the following JSON format:
 
     {
         "frame": 10,
         "r_contact": true,
         "l_contact": false,
-        "r_fingers": ["thumb", "index", "middle"],  // right hand fingertips in contact
-        "l_fingers": ["middle"]                   // left hand fingertips in contact
+        "r_fingers": ["thumb", "index", "middle"],  // right hand fingers in contact
+        "l_fingers": ["middle"]                   // left hand fingers in contact
     }
 
-    Do not ignore the middle fingertip. If the middle fingertip is in contact with the object, be sure to include 'middle' in the list.
-    If a fingertip is occluded or unclear, do not include it in the list. Only include a fingertip if you are completely confident it is in contact with the object.
+    Do not ignore the middle finger. If the middle finger is in contact with the object, be sure to include 'middle' in the list.
+    If a finger is occluded or unclear, do not include it in the list. Only include a finger if you are completely confident it is in contact with the object.
 """
 
 prompt_multi_img = """
@@ -495,7 +495,7 @@ prompt_multi_img = """
 """
 
 
-ds = "rs_scissor"  # type of dataset
+ds = "rsrd_sunglasses"  # type of dataset
 fd = "seqk3k1"
 
 

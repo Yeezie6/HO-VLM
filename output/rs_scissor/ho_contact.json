@@ -11,12 +11,10 @@
       "l_contact": true,
       "r_fingers": [
         "index",
-        "middle",
         "thumb"
       ],
       "l_fingers": [
         "index",
-        "middle",
         "thumb"
       ]
     },
@@ -160,10 +158,12 @@
       "l_contact": true,
       "r_fingers": [
         "index",
+        "middle",
         "thumb"
       ],
       "l_fingers": [
         "index",
+        "middle",
         "thumb"
       ]
     },
@@ -173,10 +173,12 @@
       "l_contact": true,
       "r_fingers": [
         "index",
+        "middle",
         "thumb"
       ],
       "l_fingers": [
         "index",
+        "middle",
         "thumb"
       ]
     },
